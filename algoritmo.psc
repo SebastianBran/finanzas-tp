@@ -70,13 +70,45 @@ FinFuncion
 
 Funcion costes_iniciales_emisor <- retorna_costes_iniciales_emisor( estructuracion, colocacion, flotacion, cavali, valor_comercial )
 	costes_iniciales_emisor <- (estructuracion + colocacion + flotacion + cavali) * valor_comercial
-	
+FinFuncion
+
 Funcion costes_iniciales_bonista <- retorna_costes_iniciales_bonista(  flotacion, cavali, valor_comercial )
 		costes_iniciales_bonista <- (flotacion + cavali) * valor_comercial	
- 
+FinFuncion
+
+Funcion cuota <- calcula_cuota( bono_indexado, periodos_restantes, tasa_efectiva_frecuencia_cupon )
+	aux = (1 + tasa_efectiva_frecuencia_cupon)^periodos_restantes
+	cuota <- - bono_indexado * ((tasa_efectiva_frecuencia_cupon * aux)/(aux - 1))
+FinFuncion
+
+Funcion calculo_cronograma_pagos( valor_nominal, nro_periodos, tasa_efectiva_frecuencia_cupon, prima )
+	bono_inicial <- valor_nominal
+	Dimension bonos[nro_periodos]
+	Dimension bonos_indexados[nro_periodos]
+	Dimension cupones_interes[nro_periodos]
+	Dimension cuotas[nro_periodos]
+	Dimension amortizaciones[nro_periodos]	
+	Dimension primas[nro_periodos]
+	
+	Para i desde 1 Hasta nro_periodos Hacer
+		Si i = 1 Entonces
+			bonos[i] <- bono_inicial
+		FinSi
+		
+		bonos_indexados[i] <- bonos[i]
+		cupones_interes[i] <- - bonos_indexados[i] * tasa_efectiva_frecuencia_cupon
+		cuotas[i] <- calcula_cuota( bonos_indexados[i], nro_periodos - i + 1, tasa_efectiva_frecuencia_cupon )
+		amortizaciones[i] <- cuotas[i] - cupones_interes[i]
+		
+		Si i = nro_periodos Entonces
+			primas[i] <- bono_indexado * prima
+		SiNo
+			primas[i] <- 0
+		FinSi
+	Fin Para
 FinFuncion
 
 Algoritmo Frances
-	
+	//calculo_cronograma_pagos(1000, 10)
 FinAlgoritmo
 	
