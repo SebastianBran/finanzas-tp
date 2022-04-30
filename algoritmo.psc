@@ -63,9 +63,9 @@ Funcion tasa_efectiva_frecuencia_cupon <- retorna_tasa_efectiva_frecuencia_cupon
 	tasa_efectiva_frecuencia_cupon <- tasa_efectiva_frecuencia_cupon * 100 
 FinFuncion
 
-Funcion cok_frecuencia_cupon <- retorna_cok_frecuencia_cupon( tasa_anual_descuento, frecuencia_cupon, dias_por_anio )
-	cok_frecuencia_cupon <- ((1+tasa_anual_descuento)^(frecuencia_cupon / dias_por_anio)) - 1
-	cok_frecuencia_cupon <- cok_frecuencia_cupon * 100
+Funcion cok <- retorna_cok( tasa_anual_descuento, frecuencia_cupon, dias_por_anio )
+	cok <- ((1+tasa_anual_descuento)^(frecuencia_cupon / dias_por_anio)) - 1
+	cok <- cok * 100
 FinFuncion
 
 Funcion costes_iniciales_emisor <- retorna_costes_iniciales_emisor( estructuracion, colocacion, flotacion, cavali, valor_comercial )
