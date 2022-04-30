@@ -81,6 +81,14 @@ Funcion cuota <- calcula_cuota( bono_indexado, periodos_restantes, tasa_efectiva
 	aux = (1 + tasa_efectiva_frecuencia_cupon)^periodos_restantes
 	cuota <- - bono_indexado * ((tasa_efectiva_frecuencia_cupon * aux)/(aux - 1))
 FinFuncion
+//sumatoria_flujo(val actual)
+Funcion sumatoria_flujo <- retornar_sumatoria_flujo(flujo,cok , nro_periodos)
+	sumatoria_flujo<-0
+	Para i<-1 Hasta nro_periodos Hacer
+		sumatoria_flujo=sumatoria_flujo+flujo[i]
+	Fin Para
+	sumatoria_flujo=sumatoria_flujo/(cok*0.1)
+FinFuncion
 
 Funcion calculo_cronograma_pagos( valor_nominal, frecuencia_cupon_dias, tasa_efectiva, nro_periodos, prima, impuesto_renta, cok, dias_por_anio )
 	bono_inicial <- valor_nominal
@@ -169,13 +177,7 @@ FinFuncion
 //		10:	Mostrar costes_iniciales_bonista
 //	Fin Segun
 //FinFuncion
-Funcion sumatoria_flujo <- retornar_sumatoria_flujo(flujo,cok , nro_periodos)
-	sumatoria_flujo<-0
-	Para i<-0 Hasta nro_periodos Hacer
-		sumatoria_flujo=sumatoria_flujo+flujo[i]
-	Fin Para
-	sumatoria_flujo=sumatoria_flujo/(cok*0.1)
-FinFuncion
+
 
 Algoritmo Frances
 	//Datos
