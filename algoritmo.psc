@@ -81,6 +81,14 @@ Funcion cuota <- calcula_cuota( bono_indexado, periodos_restantes, tasa_efectiva
 	aux = (1 + tasa_efectiva_frecuencia_cupon)^periodos_restantes
 	cuota <- - bono_indexado * ((tasa_efectiva_frecuencia_cupon * aux)/(aux - 1))
 FinFuncion
+//sumatoria_flujo(val actual)
+Funcion sumatoria_flujo <- retornar_sumatoria_flujo(flujo,cok , nro_periodos)
+	sumatoria_flujo<-0
+	Para i<-1 Hasta nro_periodos Hacer
+		sumatoria_flujo=sumatoria_flujo+flujo[i]
+	Fin Para
+	sumatoria_flujo=sumatoria_flujo/(cok*0.1)
+FinFuncion
 
 Funcion tasa <- calcula_tasa_indicador_rentabilidad( tir, dias_por_anio, frecuencia_cupon)
 	tasa <- (tir + 1)^(dias_por_anio / frecuencia_cupon) - 1
@@ -198,6 +206,7 @@ Funcion mostrar_cronograma_pagos(nro_periodos, bonos, bonos_indexados, cupones_i
 		Escribir "| Periodo: " i " | Bono: " bonos[i] " | Bono indexado: " bonos_indexados[i] " | Cupon: " cupones_interes[i] " | Cuota: " cuotas[i] " | Amortizacion: " amortizaciones[i] " | Prima: " primas[i] " | Escudo: " escudos[i] " | Flujo emisor: " flujos_emisor[i] " | Flujos emisor c/escudo: " flujos_emisor_escudo[i] " | Flujo bonista: " flujos_bonistas[i] " | Flujo actual: " flujos_actuales[i] " | Flujo actual x Plazo: "  flujos_actuales_x_plazo[i] " | Factor p / convexidad: " factor_p_convexidad[i]
 	FinPara
 FinFuncion
+
 
 Algoritmo Frances
 	//Datos
