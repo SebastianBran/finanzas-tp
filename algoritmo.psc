@@ -169,6 +169,13 @@ FinFuncion
 //		10:	Mostrar costes_iniciales_bonista
 //	Fin Segun
 //FinFuncion
+Funcion sumatoria_flujo <- retornar_sumatoria_flujo(flujo,cok , nro_periodos)
+	sumatoria_flujo<-0
+	Para i<-0 Hasta nro_periodos Hacer
+		sumatoria_flujo=sumatoria_flujo+flujo[i]
+	Fin Para
+	sumatoria_flujo=sumatoria_flujo/(cok*0.1)
+FinFuncion
 
 Algoritmo Frances
 	//Datos
