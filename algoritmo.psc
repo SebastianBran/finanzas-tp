@@ -135,6 +135,42 @@ Funcion calculo_cronograma_pagos( valor_nominal, nro_periodos, tasa_efectiva_anu
 FinFuncion
 
 Algoritmo Frances
-	//calculo_cronograma_pagos(1000, 10)
-FinAlgoritmo
+	//Datos
+	//Del Bono
+	Definir valor_nominal como real
+	Definir valor_comecial Como Real
+	Definir n_de_anios Como Entero
+    Definir frecuencia_del_cupon Como Cadena
+	Definir dias_por_año Como Entero
+	Definir tipo de tasa de interes Como cadena
+	Definir capitalizacion como cadena
+	Definir tasa_de_interes Como Real
+	Definir tasa anual de descuento como real
+	Definir capitalizacion como cadena
+	Definir tasa_de_interes Como Real
+	Definir tasa_anual_de_descuento Como Real
+	Definir imp_renta Como Real
+	Definir fecha_de_emision como cadena
+	//De los Costes/Gastos Iniciales
+	Definir prima Como Real
+	Definir estructuracion Como Real
+	Definir colocacion Como Real
+	Definir flotacion Como Real
+	definir Cavali Como Real
+	//Resultados
+	//Dela estructuracion del bono
+	Definir frecuencia_del_cupon Como Entero
+	Definir dias_de_capitalizacion como entero
+	Definir periodos_port_año  Como Entero
+	Definir nro_total_de_periodos Como Entero
+	Definir tasa_efectiva_anual como  real
+	Definir tasa_efectiva Como Real
+	Definir cok Como Real
+	Definir costes_iniciales_emisor Como Real
+	Definir costes_iniciales_bonista Como Real
+	
+	//Calculo Datos
+	frecuencia_del_cupon <- retorna_frecuencia_cupon( frecuencia_del_cupon )
+	
+	
 	
