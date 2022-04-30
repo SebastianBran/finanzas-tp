@@ -70,6 +70,10 @@ FinFuncion
 
 Funcion costes_iniciales_emisor <- retorna_costes_iniciales_emisor( estructuracion, colocacion, flotacion, cavali, valor_comercial )
 	costes_iniciales_emisor <- (estructuracion + colocacion + flotacion + cavali) * valor_comercial
+	
+Funcion costes_iniciales_bonista <- retorna_costes_iniciales_bonista(  flotacion, cavali, valor_comercial )
+		costes_iniciales_bonista <- (flotacion + cavali) * valor_comercial	
+ 
 FinFuncion
 
 Algoritmo Frances
