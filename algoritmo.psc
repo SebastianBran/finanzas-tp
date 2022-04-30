@@ -58,8 +58,8 @@ Funcion tasa_efectiva_anual <- retorna_tasa_efectiva_anual ( tipo_tasa_interes, 
 	FinSi
 FinFuncion
 
-Funcion tasa_efectiva_frecuencia_cupon <- retorna_tasa_efectiva_frecuencia_cupon ( tasa_efectiva_anual, dias_por_anio, frecuencia_cupon )
-	tasa_efectiva_frecuencia_cupon <- ((1 + tasa_efectiva_anual)^(frecuencia_cupon/dias_por_anio)) - 1
+Funcion tasa_efectiva_frecuencia_cupon <- retorna_tasa_efectiva_frecuencia_cupon ( tasa_efectiva_anual, dias_por_anio, frecuencia_cupon_dias )
+	tasa_efectiva_frecuencia_cupon <- ((1 + tasa_efectiva_anual)^(frecuencia_cupon_dias/dias_por_anio)) - 1
 	tasa_efectiva_frecuencia_cupon <- tasa_efectiva_frecuencia_cupon * 100 
 FinFuncion
 
@@ -81,18 +81,30 @@ Funcion cuota <- calcula_cuota( bono_indexado, periodos_restantes, tasa_efectiva
 	cuota <- - bono_indexado * ((tasa_efectiva_frecuencia_cupon * aux)/(aux - 1))
 FinFuncion
 
-Funcion calculo_cronograma_pagos( valor_nominal, nro_periodos, tasa_efectiva_frecuencia_cupon, prima )
+Funcion calculo_cronograma_pagos( valor_nominal, nro_periodos, tasa_efectiva_anual, prima, impuesto_renta, frecuencia_cupon, dias_por_anio )
 	bono_inicial <- valor_nominal
+	frecuencia_cupon_dias <- retorna_frecuencia_cupon( frecuencia_cupon )
+	tasa_efectiva_frecuencia_cupon <- retorna_tasa_efectiva_frecuencia_cupon( tasa_efectiva_anual, dias_por_anio, frecuencia_cupon_dias )
+	
 	Dimension bonos[nro_periodos]
 	Dimension bonos_indexados[nro_periodos]
 	Dimension cupones_interes[nro_periodos]
 	Dimension cuotas[nro_periodos]
 	Dimension amortizaciones[nro_periodos]	
 	Dimension primas[nro_periodos]
+	Dimension escudos[nro_periodos]
+	Dimension flujos_emisor[nro_periodos]
+	Dimension flujos_emisor_escudo[nro_periodos]
+	Dimension flujos_bonistas[nro_periodos]
+	Dimension flujos_actuales[nro_periodos]
+	Dimension flujos_actuales_x_plazo[nro_periodos]
+	Dimension factor_p_convexidad[nro_periodos]
 	
 	Para i desde 1 Hasta nro_periodos Hacer
 		Si i = 1 Entonces
 			bonos[i] <- bono_inicial
+		SiNo
+			bonos[i] <- bonos_indexados[i - 1] + amortizaciones[i - 1]
 		FinSi
 		
 		bonos_indexados[i] <- bonos[i]
@@ -105,7 +117,21 @@ Funcion calculo_cronograma_pagos( valor_nominal, nro_periodos, tasa_efectiva_fre
 		SiNo
 			primas[i] <- 0
 		FinSi
+		
+		escudos[i] <- - cupones_interes[i] * impuesto_renta
+		flujos_emisor[i] <- cuotas[i] + primas[i]
+		flujos_emisor_escudo[i] <- flujos_emisor[i] + escudos[i]
+		flujos_bonistas[i] <- - flujos_emisor[i]
+		flujos_actuales[i] <- (flujos_bonistas[i])/((1 + cok)^i)
+		flujos_actuales_x_plazo[i] <- (flujos_actuales[i] * i) * (frecuencia_cupon_dias / dias_por_anio)
+		factor_p_convexidad[i] <- flujos_actuales[i] * i * (i + 1)
 	Fin Para
+	
+	
+	//mostrar resultados
+	Para i desde 1 Hasta nro_periodos Hacer
+		Escribir "Periodo" i 
+	FinPara
 FinFuncion
 
 Algoritmo Frances
