@@ -133,6 +133,30 @@ Funcion calculo_cronograma_pagos( valor_nominal, nro_periodos, tasa_efectiva_anu
 		Escribir "Periodo" i 
 	FinPara
 FinFuncion
+Funcion  MostrarRestultados(dato,frecuencia_del_cupon_dias ,dias_de_capitalizacion ,periodos_por_anio,nro_total_de_periodos,tasa_efectiva_anual,tasa_efectiva,cok,costes_iniciales_emisor,costes_iniciales_bonista)
+	Segun dato Hacer
+		1:
+			Mostrar  frecuencia_del_cupon_dias
+		2:
+			Mostrar dias_de_capitalizacion
+		3:
+			Mostrar periodos_por_anio
+		4: 
+			Mostrar nro_total_de_periodos
+		5:
+			
+		6: 
+			Mostrar tasa_efectiva_anual
+		7:		
+			Mostrar tasa_efectiva
+		8:
+			Mostrar cok
+			
+		9:	Mostrar costes_iniciales_emisor
+			
+		10:	Mostrar costes_iniciales_bonista
+	Fin Segun
+FinFuncion
 
 Algoritmo Frances
 	//Datos
@@ -145,7 +169,7 @@ Algoritmo Frances
 	Definir tipo_tasa_interes Como cadena
 	Definir capitalizacion como cadena
 	Definir tasa_interes Como Real
-	Definir tasa_anual_de_descuento como real
+	Definir tasa_anual_descuento como real
 
 	Definir imp_renta Como Real
 	Definir fecha_de_emision como cadena
@@ -158,8 +182,8 @@ Algoritmo Frances
 	//Resultados
 	//Dela estructuracion del bono
 	Definir frecuencia_del_cupon_dias Como Entero
-	Definir dias_de_capitalizacion como entero
-	Definir periodos_por_ano  Como Entero
+	Definir dias_capitalizacion como entero
+	Definir periodos_por_anio  Como Entero
 	Definir nro_total_de_periodos Como Entero
 	Definir tasa_efectiva_anual como  real
 	Definir tasa_efectiva Como Real
@@ -168,15 +192,16 @@ Algoritmo Frances
 	Definir costes_iniciales_bonista Como Real
 	
 	//Calculo Resultados
-	frecuencia_del_cupon     <-     retorna_frecuencia_cupon( frecuencia_del_cupon )
-	dias_de_capitalizacion   <-     retorna_dias_capitalizacion( capitalizacion )
-	periodos_por_anio        <-      retorna_periodos_por_anio( dias_por_anio, frecuencia_del_cupon )
-	nro_total_de_periodos    <-     retorna_nro_periodos( periodos_por_anio, nro_anios )
-	tasa_efectiva_anual      <-     retorna_tasa_efectiva_anual ( tipo_tasa_interes, tasa_interes, dias_por_anio, dias_capitalizacion )
-	tasa_efectiva            <-     retorna_tasa_efectiva_frecuencia_cupon ( tasa_efectiva_anual, dias_por_anio, frecuencia_cupon_dias )
-	cok                      <-     retorna_cok( tasa_anual_descuento, frecuencia_cupon, dias_por_anio )
-	costes_iniciales_emisor  <-     retorna_costes_iniciales_emisor( estructuracion, colocacion, flotacion, cavali, valor_comercial )                         
-    costes_iniciales_bonista <-     retorna_costes_iniciales_bonista(  flotacion, cavali, valor_comercial )
+	frecuencia_del_cupon_dias     <-          retorna_frecuencia_cupon( frecuencia_del_cupon )
+	dias_de_capitalizacion        <-          retorna_dias_capitalizacion( capitalizacion )
+	periodos_por_anio             <-          retorna_periodos_por_anio( dias_por_anio, frecuencia_del_cupon )
+	nro_total_de_periodos         <-          retorna_nro_periodos( periodos_por_anio, nro_anios )
+	tasa_efectiva_anual           <-          retorna_tasa_efectiva_anual ( tipo_tasa_interes, tasa_interes, dias_por_anio, dias_capitalizacion )
+	tasa_efectiva                 <-          retorna_tasa_efectiva_frecuencia_cupon ( tasa_efectiva_anual, dias_por_anio, frecuencia_cupon_dias )
+	cok                           <-          retorna_cok( tasa_anual_descuento, frecuencia_del_cupon_dias, dias_por_anio )
+	costes_iniciales_emisor       <-          retorna_costes_iniciales_emisor( estructuracion, colocacion, flotacion, cavali, valor_comercial )                         
+    costes_iniciales_bonista      <-          retorna_costes_iniciales_bonista(  flotacion, cavali, valor_comercial )
+	
 FinProceso
 
 	
