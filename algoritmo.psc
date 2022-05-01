@@ -81,24 +81,45 @@ Funcion cuota <- calcula_cuota( bono_indexado, periodos_restantes, tasa_efectiva
 	aux = (1 + tasa_efectiva_frecuencia_cupon)^periodos_restantes
 	cuota <- - bono_indexado * ((tasa_efectiva_frecuencia_cupon * aux)/(aux - 1))
 FinFuncion
-//sumatoria_flujo(val actual)
+
 Funcion sumatoria_flujo <- retornar_sumatoria_flujo(flujo,cok , nro_periodos)
-	sumatoria_flujo<-0
-	Para i<-1 Hasta nro_periodos Hacer
-		sumatoria_flujo=sumatoria_flujo+flujo[i]
-	Fin Para
-	sumatoria_flujo=sumatoria_flujo/(cok*0.1)
+    sumatoria_flujo<-0
+    Para i<-1 Hasta nro_periodos Hacer
+        sumatoria_flujo<-sumatoria_flujo+(flujo[i]/(1+cok)^i) 
+    Fin Para
 FinFuncion
+
+
+
+//Calculo Ratios de Desicion
+Funcion sumatoria<-retornar_sumatoria(flujo,nro_periodos)
+	sumatoria<-0
+	Para i desde 1 Hasta nro_periodos Hacer
+		sumatoria<-sumatoria+flujo[i]
+	Fin Para
+FinFuncion
+//Calcular Duracion
+Funcion duracion<-retornar_duracion(flujos_actuales,flujos_actuales_x_plazo,nro_periodos)
+	duracion<-retornar_sumatoria(flujos_actuales,nro_periodos)/retornar_sumatoria(flujos_actuales_x_plazo,nro_periodos)
+FinFuncion
+
+//Calcular Convexidad
+Funcion convexidad<-retornar_convexidad(factor_p_convexidad,flujos_actuales,cok,frecuencia_cupon_dias,dias_por_anio,nro_periodos)
+	convexidad<-retornar_sumatoria(factor_p_convexidad,nro_periodos)/(((1+cok*0.1)^2)*retornar_sumatoria(flujos_actuales,nro_periodos)*((dias_por_año/frecuencia_cupon_dias)^2))
+FinFuncion
+//Calcular tOTAL : tambn se podria ser directament
+Funcion total<- retornar_Total(duracion,convexidad)
+	total<-duracion+convexidad
+FinFuncion
+
+//cal duracion modificada
+Funcion Duracion_modificada<- retornar_duracion_morificada(cok,duracion)
+	duracion_modificada <-duracion/(1+cok)
+FinFuncion
+
 
 Funcion tasa <- calcula_tasa_indicador_rentabilidad( tir, dias_por_anio, frecuencia_cupon)
 	tasa <- (tir + 1)^(dias_por_anio / frecuencia_cupon) - 1
-FinFuncion
-
-Funcion sumatoria_flujo <- retornar_sumatoria_flujo(flujo,cok , nro_periodos)
-    sumatoria_flujo <- 0
-    Para i<-1 Hasta nro_periodos Hacer
-        sumatoria_flujo <- sumatoria_flujo + (flujo[i] / (1+cok)^i) 
-    Fin Para
 FinFuncion
 
 Funcion tir <- calcula_tir( inversion, flujo, nro_periodos )
@@ -150,6 +171,7 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 		
 		Si i = nro_periodos Entonces
 			primas[i] <- bonos_indexados[i] * prima
+
 		SiNo
 			primas[i] <- 0
 		FinSi
@@ -168,7 +190,10 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 	flujo_bonista_inicial <- costes_iniciales_bonista - valor_comercial
 	
 	//VA
-	
+	duracion<-retornar_duracion(flujos_actuales,flujos_actuales_x_plazo,nro_periodos)
+	convexidad<-retornar_convexidad(factor_p_convexidad,flujos_actuales,cok,frecuencia_cupon_dias,dias_por_anio,nro_periodos)
+	total<-retornar_Total(duracion,convexidad)
+	duracion_modificada<-retornar_duracion_morificada(cok,duracion)
 	
 	//Indicadores de rentabilidad
 	tir_tcea_emisor <- calcula_tir(flujo_emisor_inicial, flujos_emisor, nro_periodos)
@@ -181,10 +206,10 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 	
 	//mostrar resultados
 	mostrar_cronograma_pagos(nro_periodos, bonos, bonos_indexados, cupones_interes, cuotas, amortizaciones, primas, escudos, flujos_emisor, flujos_emisor_escudo, flujos_bonistas, flujos_actuales, flujos_actuales, flujos_actuales_x_plazo, factor_p_convexidad)	
-	mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista, tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
+	mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista, tcea_emisor, tcea_emisor_c_escudo, trea_bonista ,duracion,convexidad,total,duracion_modificada)
 FinFuncion
 
-Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista, tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
+Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada,tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
 	Escribir ""
 	Escribir "Frecuencia del cupon en dias: " frecuencia_cupon_dias
 	Escribir "Dias de capitalizacion: " dias_capitalizacion
@@ -195,6 +220,10 @@ Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitaliz
 	Escribir "Cok: " cok "%"
 	Escribir "Costes iniciales emisor: " costes_iniciales_emisor
 	Escribir "Costes iniciales bonista: " costes_iniciales_bonista
+	Escribir "Duracion: " duracion
+	Escribir "Convexidad: " convexidad
+	Escribir "Total: " total
+	Escribir "Duracion Modificada: " duracion_modificada
 	Escribir "TCEA Emisor: " tcea_emisor "%"
 	Escribir "TCEA Emisor c/Escudo: " tcea_emisor_c_escudo "%"
 	Escribir "TREA Bonista: " trea_bonista "%"
