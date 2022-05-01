@@ -110,7 +110,7 @@ Funcion tir <- calcula_tir( inversion, flujo, nro_periodos )
 	tir <- l * 100
 FinFuncion
 
-Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista, prima, impuesto_renta, dias_por_anio )
+Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista, prima, impuesto_renta, dias_por_anio, plazo_gracia, tipo_plazo )
 	bono_inicial <- valor_nominal
 	
 	Dimension bonos[nro_periodos]
@@ -126,21 +126,55 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 	Dimension flujos_actuales[nro_periodos]
 	Dimension flujos_actuales_x_plazo[nro_periodos]
 	Dimension factor_p_convexidad[nro_periodos]
+	Dimension plazos_de_gracia_bono[nro_periodos]
 	
+	Si plazo_gracia > 0 Entonces
+		Para i <- 1 Hasta plazo_gracia Hacer
+			plazos_de_gracia_bono[i] <- tipo_plazo
+		FinPara
+		
+		Para i <- plazo_gracia + 1 Hasta nro_periodos Hacer
+			plazos_de_gracia_bono[i] <- "S"
+		FinPara
+	Sino
+		Para i <- 1 Hasta nro_periodos Hacer
+			plazos_de_gracia_bono[i] <- "S"
+		FinPara
+	FinSi
+		
 	Para i desde 1 Hasta nro_periodos Hacer
 		Si i = 1 Entonces
 			bonos[i] <- bono_inicial
 		SiNo
-			bonos[i] <- bonos_indexados[i - 1] + amortizaciones[i - 1]
+			Si plazos_de_gracia_bono[i - 1] = "T" Entonces
+				bonos[i] <- bonos_indexados[i - 1] - cupones_interes[i - 1]
+			SiNo
+				bonos[i] <- bonos_indexados[i - 1] + amortizaciones[i - 1]
+			FinSi
+			
 		FinSi
 		
 		bonos_indexados[i] <- bonos[i]
 		cupones_interes[i] <- - bonos_indexados[i] * tasa_efectiva
-		cuotas[i] <- calcula_cuota( bonos_indexados[i], nro_periodos - i + 1, tasa_efectiva )
-		amortizaciones[i] <- cuotas[i] - cupones_interes[i]
+		
+		Si plazos_de_gracia_bono[i] = "T" Entonces
+			cuotas[i] <- 0
+		SiNo
+			Si plazos_de_gracia_bono[i] = "P" Entonces
+				cuotas[i] <- cupones_interes[i]
+			SiNo
+				cuotas[i] <- calcula_cuota( bonos_indexados[i], nro_periodos - i + 1, tasa_efectiva )
+			FinSi
+		FinSi
+		
+		Si plazos_de_gracia_bono[i] = "T" o  plazos_de_gracia_bono[i] = "P" Entonces
+			amortizaciones[i] <- 0
+		SiNo
+			amortizaciones[i] <- cuotas[i] - cupones_interes[i]
+		FinSi
 		
 		Si i = nro_periodos Entonces
-			primas[i] <- bonos_indexados[i] * prima
+			primas[i] <- -bonos_indexados[i] * prima
 		SiNo
 			primas[i] <- 0
 		FinSi
@@ -172,7 +206,7 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 	
 	//mostrar resultados
 	mostrar_cronograma_pagos(nro_periodos, bonos, bonos_indexados, cupones_interes, cuotas, amortizaciones, primas, escudos, flujos_emisor, flujos_emisor_escudo, flujos_bonistas, flujos_actuales, flujos_actuales, flujos_actuales_x_plazo, factor_p_convexidad)	
-	mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista, tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
+	mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual * 100, tasa_efectiva * 100, cok * 100, costes_iniciales_emisor, costes_iniciales_bonista, tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
 FinFuncion
 
 Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista, tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
@@ -219,7 +253,8 @@ Algoritmo Frances
 	Definir colocacion Como Real
 	Definir flotacion Como Real
 	Definir cavali Como Real
-	
+	Definir plazo_gracia Como Entero
+	Definir tipo_plazo Como Caracter
 	//Ini Lectura de datos
 	Escribir "Valor nominal: "
 	Leer valor_nominal
@@ -268,6 +303,12 @@ Algoritmo Frances
 	
 	Escribir "Cavali: "
 	Leer cavali
+	
+	Escribir "Plazo de gracia: "
+	Leer plazo_gracia
+	
+	Escribir "Tipo de plazo de gracia: "
+	Leer tipo_plazo
 	//FIn lectura de datos
 	
 	//Resultados
@@ -293,5 +334,5 @@ Algoritmo Frances
 	costes_iniciales_emisor       <-          retorna_costes_iniciales_emisor( estructuracion, colocacion, flotacion, cavali, valor_comercial )                         
     costes_iniciales_bonista      <-          retorna_costes_iniciales_bonista(  flotacion, cavali, valor_comercial )
 
-	calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual * 0.01, tasa_efectiva * 0.01, cok * 0.01, costes_iniciales_emisor, costes_iniciales_bonista, prima, impuesto_renta, dias_por_anio )
+	calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual * 0.01, tasa_efectiva * 0.01, cok * 0.01, costes_iniciales_emisor, costes_iniciales_bonista, prima, impuesto_renta, dias_por_anio, plazo_gracia, tipo_plazo )
 FinProceso
