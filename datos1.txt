@@ -1,0 +1,16 @@
+valor nominal: 1000
+valor comercial: 1050
+n° años: 5
+frecuencia del cupon: Semestral
+dias por año: 360
+tipo de tasa de interes: Efectiva
+capitalizacion: Mensual
+tasa de interes: 0.08
+tasa anual de descuento: 0.045
+impuesto a la renta: 0.3
+fecha de emision: 01/05/2022
+prima: 0.01
+estructuracion: 0.01
+colocacion: 0.0025
+flotacion: 0.0045
+cavali: 0.005
