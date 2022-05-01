@@ -224,6 +224,9 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 	flujo_emisor_c_escudo_inicial <- flujo_emisor_inicial
 	flujo_bonista_inicial <- - valor_comercial - costes_iniciales_bonista
 	
+	//Del precio y utilidad
+	precio_actual<- retornar_sumatoria_flujo(flujos_bonistas,cok,nro_periodos)
+	utilidad_o_perdida<- valor_comercial + (flotacion+cavali)*valor_comercial
 	//ratios
 	duracion<-retornar_duracion(flujos_actuales,flujos_actuales_x_plazo,nro_periodos)
 	convexidad<-retornar_convexidad(factor_p_convexidad,flujos_actuales,cok+0.01,frecuencia_cupon_dias,dias_por_anio,nro_periodos)
@@ -243,10 +246,10 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 	
 	//mostrar resultados
 	mostrar_cronograma_pagos(nro_periodos, bonos, bonos_indexados, cupones_interes, cuotas, amortizaciones, primas, escudos, flujos_emisor, flujos_emisor_escudo, flujos_bonistas, flujos_actuales, flujos_actuales, flujos_actuales_x_plazo, factor_p_convexidad)	
-	mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada, tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
+	mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada, tcea_emisor, tcea_emisor_c_escudo, trea_bonista,valor_actual,utilidad_o_perdida )
 FinFuncion
 
-Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada ,tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
+Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada ,tcea_emisor, tcea_emisor_c_escudo, trea_bonista ,valor_actual,utilidad_o_perdida)
 	Escribir ""
 	Escribir "Frecuencia del cupon en dias: " frecuencia_cupon_dias
 	Escribir "Dias de capitalizacion: " dias_capitalizacion
@@ -257,6 +260,8 @@ Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitaliz
 	Escribir "Cok: " cok "%"
 	Escribir "Costes iniciales emisor: " costes_iniciales_emisor
 	Escribir "Costes iniciales bonista: " costes_iniciales_bonista
+	Escribir "Valor Actual: " valor_actual
+	Escribir "Utilidad/Perdida: " utilidad_o_perdida
 	Escribir "Duracion: " duracion
 	Escribir "Convexidad: " convexidad
 	Escribir "Total: " total
