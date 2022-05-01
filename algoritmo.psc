@@ -92,6 +92,36 @@ Funcion sumatoria_flujo <- retornar_sumatoria_flujo(flujo, tasa , nro_periodos)
     Fin Para
 FinFuncion
 
+//Calculo Ratios de Desicion
+Funcion sumatoria<-retornar_sumatoria(flujo,nro_periodos)
+	sumatoria<-0
+	Para i desde 1 Hasta nro_periodos Hacer
+		sumatoria<-sumatoria+flujo[i]
+	Fin Para
+FinFuncion
+//Calcular Duracion
+Funcion duracion<-retornar_duracion(flujos_actuales,flujos_actuales_x_plazo,nro_periodos)
+	numerador <-retornar_sumatoria(flujos_actuales_x_plazo,nro_periodos)
+	denominador<-retornar_sumatoria(flujos_actuales,nro_periodos)
+	duracion<-numerador/denominador
+	Escribir "Anser: " duracion
+FinFuncion
+
+//Calcular Convexidad
+Funcion convexidad<-retornar_convexidad(factor_p_convexidad,flujos_actuales,cok,frecuencia_cupon_dias,dias_por_anio,nro_periodos)
+	convexidad<-retornar_sumatoria(factor_p_convexidad,nro_periodos)/(((1+cok)^2)*retornar_sumatoria(flujos_actuales,nro_periodos)*((dias_por_anio/frecuencia_cupon_dias)^2))
+FinFuncion
+//Calcular tOTAL : tambn se podria ser directament
+Funcion total<- retornar_Total(duracion,convexidad)
+	total<-duracion+convexidad
+FinFuncion
+
+//cal duracion modificada
+Funcion Duracion_modificada<- retornar_duracion_morificada(cok,duracion)
+	duracion_modificada <-duracion/(1+cok)
+FinFuncion
+
+
 Funcion tir <- calcula_tir( inversion, flujo, nro_periodos )
 	l <- 0
 	r <- 1
@@ -154,11 +184,18 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 		factor_p_convexidad[i] <- flujos_actuales[i] * i * (i + 1)
 	Fin Para
 	
+	
+	
 	flujo_emisor_inicial <- costes_iniciales_emisor - valor_comercial
 	flujo_emisor_c_escudo_inicial <- flujo_emisor_inicial
 	flujo_bonista_inicial <- - valor_comercial - costes_iniciales_bonista
 	
-	//VA
+	//ratios
+	duracion<-retornar_duracion(flujos_actuales,flujos_actuales_x_plazo,nro_periodos)
+	convexidad<-retornar_convexidad(factor_p_convexidad,flujos_actuales,cok+0.01,frecuencia_cupon_dias,dias_por_anio,nro_periodos)
+	total<-retornar_Total(duracion,convexidad)
+	duracion_modificada<-retornar_duracion_morificada(cok,duracion)
+
 	
 	
 	//Indicadores de rentabilidad
@@ -172,10 +209,10 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 	
 	//mostrar resultados
 	mostrar_cronograma_pagos(nro_periodos, bonos, bonos_indexados, cupones_interes, cuotas, amortizaciones, primas, escudos, flujos_emisor, flujos_emisor_escudo, flujos_bonistas, flujos_actuales, flujos_actuales, flujos_actuales_x_plazo, factor_p_convexidad)	
-	mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista, tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
+	mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada, tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
 FinFuncion
 
-Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista, tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
+Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada ,tcea_emisor, tcea_emisor_c_escudo, trea_bonista )
 	Escribir ""
 	Escribir "Frecuencia del cupon en dias: " frecuencia_cupon_dias
 	Escribir "Dias de capitalizacion: " dias_capitalizacion
@@ -186,6 +223,10 @@ Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitaliz
 	Escribir "Cok: " cok "%"
 	Escribir "Costes iniciales emisor: " costes_iniciales_emisor
 	Escribir "Costes iniciales bonista: " costes_iniciales_bonista
+	Escribir "Duracion: " duracion
+	Escribir "Convexidad: " convexidad
+	Escribir "Total: " total
+	Escribir "Duracion Modificada: " duracion_modificada
 	Escribir "TCEA Emisor: " tcea_emisor "%"
 	Escribir "TCEA Emisor c/Escudo: " tcea_emisor_c_escudo "%"
 	Escribir "TREA Bonista: " trea_bonista "%"
