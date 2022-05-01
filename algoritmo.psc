@@ -59,7 +59,6 @@ Funcion tasa_efectiva_anual <- retorna_tasa_efectiva_anual ( tipo_tasa_interes, 
 FinFuncion
 
 Funcion tasa_efectiva <- retorna_tasa_efectiva ( tasa_efectiva_anual, dias_por_anio, frecuencia_cupon_dias )
-	//Escribir tasa_efectiva_anual " " dias_por_anio " " frecuencia_cupon_dias
 	tasa_efectiva <- ((1 + tasa_efectiva_anual)^(frecuencia_cupon_dias / dias_por_anio)) - 1
 	tasa_efectiva <- tasa_efectiva * 100 
 FinFuncion
@@ -74,49 +73,41 @@ Funcion costes_iniciales_emisor <- retorna_costes_iniciales_emisor( estructuraci
 FinFuncion
 
 Funcion costes_iniciales_bonista <- retorna_costes_iniciales_bonista(  flotacion, cavali, valor_comercial )
-		costes_iniciales_bonista <- (flotacion + cavali) * valor_comercial	
+	costes_iniciales_bonista <- (flotacion + cavali) * valor_comercial	
 FinFuncion
 
 Funcion cuota <- calcula_cuota( bono_indexado, periodos_restantes, tasa_efectiva_frecuencia_cupon )
 	aux = (1 + tasa_efectiva_frecuencia_cupon)^periodos_restantes
 	cuota <- - bono_indexado * ((tasa_efectiva_frecuencia_cupon * aux)/(aux - 1))
 FinFuncion
-//sumatoria_flujo(val actual)
-Funcion sumatoria_flujo <- retornar_sumatoria_flujo(flujo,cok , nro_periodos)
-	sumatoria_flujo<-0
-	Para i<-1 Hasta nro_periodos Hacer
-		sumatoria_flujo=sumatoria_flujo+flujo[i]
-	Fin Para
-	sumatoria_flujo=sumatoria_flujo/(cok*0.1)
-FinFuncion
 
 Funcion tasa <- calcula_tasa_indicador_rentabilidad( tir, dias_por_anio, frecuencia_cupon)
-	tasa <- (tir + 1)^(dias_por_anio / frecuencia_cupon) - 1
+	tasa <- ((tir + 1)^(dias_por_anio / frecuencia_cupon) - 1) * 100
 FinFuncion
 
-Funcion sumatoria_flujo <- retornar_sumatoria_flujo(flujo,cok , nro_periodos)
+Funcion sumatoria_flujo <- retornar_sumatoria_flujo(flujo, tasa , nro_periodos)
     sumatoria_flujo <- 0
     Para i<-1 Hasta nro_periodos Hacer
-        sumatoria_flujo <- sumatoria_flujo + (flujo[i] / (1+cok)^i) 
+        sumatoria_flujo <- sumatoria_flujo + (ABS(flujo[i]) / (1 + tasa)^i) 
     Fin Para
 FinFuncion
 
 Funcion tir <- calcula_tir( inversion, flujo, nro_periodos )
 	l <- 0
 	r <- 1
-	precision <- 0.00001
+	precision <- 0.000001
 	
-	Mientras l < r Hacer
-		mit <- (l + r) / 2
+	Mientras l < r - precision Hacer
+		mit <- TRUNC(((l + r) / 2) * 1000000) / 1000000
 		
-		Si retornar_sumatoria_flujo( flujo, tasa, nro_periodos) < inversion Entonces
-			l <- mit + precision
+		Si retornar_sumatoria_flujo( flujo, mit, nro_periodos) < ABS(inversion) Entonces
+			r <- mit - precision
 		SiNo
-			r <- mit
+			l <- mit
 		FinSi
 	Fin Mientras
-	
-	escribir l * 100
+		
+	tir <- l * 100
 FinFuncion
 
 Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista, prima, impuesto_renta, dias_por_anio )
@@ -165,7 +156,7 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 	
 	flujo_emisor_inicial <- costes_iniciales_emisor - valor_comercial
 	flujo_emisor_c_escudo_inicial <- flujo_emisor_inicial
-	flujo_bonista_inicial <- costes_iniciales_bonista - valor_comercial
+	flujo_bonista_inicial <- - valor_comercial - costes_iniciales_bonista
 	
 	//VA
 	
@@ -177,7 +168,7 @@ Funcion calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cup
 	
 	tcea_emisor <- calcula_tasa_indicador_rentabilidad(tir_tcea_emisor * 0.01, dias_por_anio, frecuencia_cupon_dias)
 	tcea_emisor_c_escudo <- calcula_tasa_indicador_rentabilidad(tir_tcea_emisor_c_escudo * 0.01, dias_por_anio, frecuencia_cupon_dias)
-	trea_bonista <- calcula_tasa_indicador_rentabilidad(tir_trea_bonista, dias_por_anio * 0.01, frecuencia_cupon_dias)
+	trea_bonista <- calcula_tasa_indicador_rentabilidad(tir_trea_bonista * 0.01, dias_por_anio, frecuencia_cupon_dias)
 	
 	//mostrar resultados
 	mostrar_cronograma_pagos(nro_periodos, bonos, bonos_indexados, cupones_interes, cuotas, amortizaciones, primas, escudos, flujos_emisor, flujos_emisor_escudo, flujos_bonistas, flujos_actuales, flujos_actuales, flujos_actuales_x_plazo, factor_p_convexidad)	
@@ -206,7 +197,6 @@ Funcion mostrar_cronograma_pagos(nro_periodos, bonos, bonos_indexados, cupones_i
 		Escribir "| Periodo: " i " | Bono: " bonos[i] " | Bono indexado: " bonos_indexados[i] " | Cupon: " cupones_interes[i] " | Cuota: " cuotas[i] " | Amortizacion: " amortizaciones[i] " | Prima: " primas[i] " | Escudo: " escudos[i] " | Flujo emisor: " flujos_emisor[i] " | Flujos emisor c/escudo: " flujos_emisor_escudo[i] " | Flujo bonista: " flujos_bonistas[i] " | Flujo actual: " flujos_actuales[i] " | Flujo actual x Plazo: "  flujos_actuales_x_plazo[i] " | Factor p / convexidad: " factor_p_convexidad[i]
 	FinPara
 FinFuncion
-
 
 Algoritmo Frances
 	//Datos
@@ -302,9 +292,6 @@ Algoritmo Frances
 	cok                           <-          retorna_cok( tasa_anual_descuento, frecuencia_cupon_dias, dias_por_anio )
 	costes_iniciales_emisor       <-          retorna_costes_iniciales_emisor( estructuracion, colocacion, flotacion, cavali, valor_comercial )                         
     costes_iniciales_bonista      <-          retorna_costes_iniciales_bonista(  flotacion, cavali, valor_comercial )
-	
-	//mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista )
-	
-	//calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cupon_dias, tasa_efectiva * 0.01, nro_periodos, prima, impuesto_renta, cok * 0.01, dias_por_anio )
+
 	calculo_cronograma_pagos( valor_nominal, valor_comercial, frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual * 0.01, tasa_efectiva * 0.01, cok * 0.01, costes_iniciales_emisor, costes_iniciales_bonista, prima, impuesto_renta, dias_por_anio )
 FinProceso
