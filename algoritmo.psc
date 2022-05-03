@@ -118,7 +118,7 @@ Funcion total <- retornar_Total(duracion,convexidad)
 FinFuncion
 
 // cal duracion modificada
-Funcion duracion_modificada <- retornar_duracion_morificada(cok,duracion)
+Funcion duracion_modificada <- retornar_duracion_modificada(cok,duracion)
 	duracion_modificada <- duracion/(1+cok)
 FinFuncion
 
@@ -206,53 +206,47 @@ Funcion calculo_cronograma_pagos(valor_nominal,valor_comercial,frecuencia_cupon_
 	FinPara
 	flujo_emisor_inicial <- costes_iniciales_emisor-valor_comercial
 	flujo_emisor_c_escudo_inicial <- flujo_emisor_inicial
-	flujo_bonista_inicial <- - valor_comercial - costes_iniciales_bonista
-	
-	//Del precio y utilidad
-	precio_actual<- retornar_sumatoria_flujo(flujos_bonistas,cok,nro_periodos)
-	utilidad_o_perdida<- valor_comercial + (flotacion+cavali)*valor_comercial
-	//ratios
-	duracion<-retornar_duracion(flujos_actuales,flujos_actuales_x_plazo,nro_periodos)
-	convexidad<-retornar_convexidad(factor_p_convexidad,flujos_actuales,cok+0.01,frecuencia_cupon_dias,dias_por_anio,nro_periodos)
-	total<-retornar_Total(duracion,convexidad)
-	duracion_modificada<-retornar_duracion_morificada(cok,duracion)
-
-	
-	
-	//Indicadores de rentabilidad
-	tir_tcea_emisor <- calcula_tir(flujo_emisor_inicial, flujos_emisor, nro_periodos)
-	tir_tcea_emisor_c_escudo <- calcula_tir(flujo_emisor_c_escudo_inicial, flujos_emisor_escudo, nro_periodos)
-	tir_trea_bonista <- calcula_tir(flujo_bonista_inicial, flujos_bonistas, nro_periodos)
-	
-	tcea_emisor <- calcula_tasa_indicador_rentabilidad(tir_tcea_emisor * 0.01, dias_por_anio, frecuencia_cupon_dias)
-	tcea_emisor_c_escudo <- calcula_tasa_indicador_rentabilidad(tir_tcea_emisor_c_escudo * 0.01, dias_por_anio, frecuencia_cupon_dias)
-	trea_bonista <- calcula_tasa_indicador_rentabilidad(tir_trea_bonista * 0.01, dias_por_anio, frecuencia_cupon_dias)
-	
-	//mostrar resultados
-	mostrar_cronograma_pagos(nro_periodos, bonos, bonos_indexados, cupones_interes, cuotas, amortizaciones, primas, escudos, flujos_emisor, flujos_emisor_escudo, flujos_bonistas, flujos_actuales, flujos_actuales, flujos_actuales_x_plazo, factor_p_convexidad)	
-	mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada, tcea_emisor, tcea_emisor_c_escudo, trea_bonista,valor_actual,utilidad_o_perdida )
+	flujo_bonista_inicial <- -valor_comercial-costes_iniciales_bonista
+	// Del precio y utilidad
+	precio_actual <- retornar_sumatoria_flujo(flujos_bonistas,cok,nro_periodos)
+	utilidad_o_perdida <- valor_comercial+(flotacion+cavali)*valor_comercial
+	// ratios
+	duracion <- retornar_duracion(flujos_actuales,flujos_actuales_x_plazo,nro_periodos)
+	convexidad <- retornar_convexidad(factor_p_convexidad,flujos_actuales,cok+0.01,frecuencia_cupon_dias,dias_por_anio,nro_periodos)
+	total <- retornar_Total(duracion,convexidad)
+	duracion_modificada <- retornar_duracion_modificada(cok,duracion)
+	// Indicadores de rentabilidad
+	tir_tcea_emisor <- calcula_tir(flujo_emisor_inicial,flujos_emisor,nro_periodos)
+	tir_tcea_emisor_c_escudo <- calcula_tir(flujo_emisor_c_escudo_inicial,flujos_emisor_escudo,nro_periodos)
+	tir_trea_bonista <- calcula_tir(flujo_bonista_inicial,flujos_bonistas,nro_periodos)
+	tcea_emisor <- calcula_tasa_indicador_rentabilidad(tir_tcea_emisor*0.01,dias_por_anio,frecuencia_cupon_dias)
+	tcea_emisor_c_escudo <- calcula_tasa_indicador_rentabilidad(tir_tcea_emisor_c_escudo*0.01,dias_por_anio,frecuencia_cupon_dias)
+	trea_bonista <- calcula_tasa_indicador_rentabilidad(tir_trea_bonista*0.01,dias_por_anio,frecuencia_cupon_dias)
+	// mostrar resultados
+	mostrar_cronograma_pagos(nro_periodos,bonos,bonos_indexados,cupones_interes,cuotas,amortizaciones,primas,escudos,flujos_emisor,flujos_emisor_escudo,flujos_bonistas,flujos_actuales,flujos_actuales,flujos_actuales_x_plazo,factor_p_convexidad)
+	mostrar_resultados(frecuencia_cupon_dias,dias_capitalizacion,periodos_por_anio,nro_periodos,tasa_efectiva_anual,tasa_efectiva,cok,costes_iniciales_emisor,costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada,tcea_emisor,tcea_emisor_c_escudo,trea_bonista,valor_actual,utilidad_o_perdida)
 FinFuncion
 
-Funcion mostrar_resultados_estructuracion( frecuencia_cupon_dias, dias_capitalizacion, periodos_por_anio, nro_periodos, tasa_efectiva_anual, tasa_efectiva, cok, costes_iniciales_emisor, costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada ,tcea_emisor, tcea_emisor_c_escudo, trea_bonista ,valor_actual,utilidad_o_perdida)
-	Escribir ""
-	Escribir "Frecuencia del cupon en dias: " frecuencia_cupon_dias
-	Escribir "Dias de capitalizacion: " dias_capitalizacion
-	Escribir "Periodos por anio: " periodos_por_anio
-	Escribir "Numero total de periodos: " nro_periodos
-	Escribir "Tasa efectiva anual: " tasa_efectiva_anual "%"
-	Escribir "Tasa efectiva: " tasa_efectiva "%"
-	Escribir "Cok: " cok "%"
-	Escribir "Costes iniciales emisor: " costes_iniciales_emisor
-	Escribir "Costes iniciales bonista: " costes_iniciales_bonista
-	Escribir "Valor Actual: " valor_actual
-	Escribir "Utilidad/Perdida: " utilidad_o_perdida
-	Escribir "Duracion: " duracion
-	Escribir "Convexidad: " convexidad
-	Escribir "Total: " total
-	Escribir "Duracion Modificada: " duracion_modificada
-	Escribir "TCEA Emisor: " tcea_emisor "%"
-	Escribir "TCEA Emisor c/Escudo: " tcea_emisor_c_escudo "%"
-	Escribir "TREA Bonista: " trea_bonista "%"
+Funcion mostrar_resultados(frecuencia_cupon_dias,dias_capitalizacion,periodos_por_anio,nro_periodos,tasa_efectiva_anual,tasa_efectiva,cok,costes_iniciales_emisor,costes_iniciales_bonista,duracion,convexidad,total,duracion_modificada,tcea_emisor,tcea_emisor_c_escudo,trea_bonista,valor_actual,utilidad_o_perdida)
+	Escribir ''
+	Escribir 'Frecuencia del cupon en dias: ',frecuencia_cupon_dias
+	Escribir 'Dias de capitalizacion: ',dias_capitalizacion
+	Escribir 'Periodos por anio: ',periodos_por_anio
+	Escribir 'Numero total de periodos: ',nro_periodos
+	Escribir 'Tasa efectiva anual: ',tasa_efectiva_anual,'%'
+	Escribir 'Tasa efectiva: ',tasa_efectiva,'%'
+	Escribir 'Cok: ',cok,'%'
+	Escribir 'Costes iniciales emisor: ',costes_iniciales_emisor
+	Escribir 'Costes iniciales bonista: ',costes_iniciales_bonista
+	Escribir 'Valor Actual: ',valor_actual
+	Escribir 'Utilidad/Perdida: ',utilidad_o_perdida
+	Escribir 'Duracion: ',duracion
+	Escribir 'Convexidad: ',convexidad
+	Escribir 'Total: ',total
+	Escribir 'Duracion Modificada: ',duracion_modificada
+	Escribir 'TCEA Emisor: ',tcea_emisor,'%'
+	Escribir 'TCEA Emisor c/Escudo: ',tcea_emisor_c_escudo,'%'
+	Escribir 'TREA Bonista: ',trea_bonista,'%'
 FinFuncion
 
 Funcion mostrar_cronograma_pagos(nro_periodos,bonos,bonos_indexados,cupones_interes,cuotas,amortizaciones,primas,escudos,flujos_emisor,flujos_emisor_escudo,flujos_bonistas,flujos_actuales,flujos_actuales,flujos_actuales_x_plazo,factor_p_convexidad)
